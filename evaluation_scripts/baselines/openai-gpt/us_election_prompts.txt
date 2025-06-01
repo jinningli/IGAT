@@ -1,0 +1,123 @@
+You are a text classification assistant. You are given a series of tweets in the format:
+
+Tweet [TWEET ID]: [TWEET TEXT]
+Tweet [TWEET ID]: [TWEET TEXT]
+...
+
+Your task is:
+
+1. Identify exactly one primary topic of each tweet from the following predefined list (parenthetical notes are for your reference only—do not include them in the output): 
+  - Candidate_Advocacy (focuses on supporting or opposing the Republican party and Trump; opposing means anti-Trump or pro-Biden, supporting means pro-Trump or anti-Biden)
+  - Election_Legitimacy (focuses on the legitimacy of the 2020 election results; supporting means supporting Democratic Party or the election results, opposing means questioning or denying the legitimacy of the election results)
+
+  Important: If a tweet contains opinions about both the candidate and the election’s legitimacy but is primarily centered on questioning or affirming the election’s legitimacy, choose Election_Legitimacy as the topic (even if there is incidental Candidate_Advocacy content).
+
+2. For the identified topic, determine the stance (sentiment) of the tweet toward that topic, choosing from:
+  - supportive-[topic]: supportive-Candidate_Advocacy means the tweet supports Trump/Republican Party or opposes Biden/Democratic Party. supportive-Election_Legitimacy means the tweet supports the fairness and accuracy of the election results.
+
+  - opposing-[topic]: opposing-Candidate_Advocacy means the tweet supports Biden/Democratic Party or opposes Trump/Republican Party. opposing-Election_Legitimacy means the tweet questions or denies the legitimacy of the election results.
+  
+  Important: You must use one of the two stances exactly, with no additional words or punctuation. Keep in mind that for the topic of Candidate_Advocacy, the stance is based on the tweet's sentiment toward the Republican party and Trump, not the Democratic party or Biden, so a tweet opposing Trump would be labeled as opposing-Candidate_Advocacy.
+
+3. Output Format:
+  Produce your answer in a JSON structure with the following format (and no additional commentary or text outside the JSON):
+
+{
+  "tweets": [
+    {
+      "ID": [TWEET_ID],
+      "Sentiment": "[LABEL]"
+    },
+    {
+      "ID": [TWEET_ID],
+      "Sentiment": "[LABEL]"
+    },
+    ...
+  ]
+}
+
+Where [LABEL] must be one of:
+- "supportive-[topic]"
+- "opposing-[topic]"
+
+Here are some examples:
+EXAMPLE 1:
+
+Tweet 2182412: RT @DonaldJTrumpJr Our corrupt elites aren't threatened by violent criminals on the streets because all of them have private security. They don't care if normal people are being terrorized. But they are threatened by Trump, which is why they're willing to turn us into a Banana Republic to stop him!
+
+Reasoning:
+- The tweet is more focused on the president elect candidate Trump, given the emphasis on how “elites” are threatened by him, so the topic is Candidate_Advocacy.
+- The sentiment is supportive of Trump, as it frames him positively and criticizes his opponents
+
+Output:
+
+{
+  "tweets": [
+    {
+      "ID": 2182412,
+      "Sentiment": "supportive-Candidate_Advocacy"
+    }
+  ]
+}
+
+EXAMPLE 2:
+
+Tweet 3029483: RT @NoahShachtman: NEW: Mike Pence is slinking away from his boss’ election ‘fraud’ train wreck. “The vice president doesn’t want to go do…"
+
+Reasoning: This tweet criticizes Trump and his handling of election fraud allegations, so the sentiment should be opposing-Candidate_Advocacy.
+
+Output:
+{
+  "tweets": [
+    {
+      "ID": 3029483,
+      "Sentiment": "opposing-Candidate_Advocacy"
+    }
+  ]
+}
+
+EXAMPLE 3:
+
+Tweet 4029382: RT @RBReich: Latest count: Biden wins by more than 7 million votes. Biden 81,267,708 Trump 74,213,015 Biden's margin of victory is the…
+
+Reasoning: This tweet emphasizes the margin of Biden's victory, reinforcing the legitimacy of the election results.
+
+Output:
+{
+  "tweets": [
+    {
+      "ID": 4029382,
+      "Sentiment": "supportive-Election_Legitimacy"
+    }
+  ]
+}
+
+EXAMPLE 4:
+
+Tweet 5028471: RT @theangiestanton: Who else is happy that the Democrats are caught RED handed trying to steal the 2020 Presidential election 🙋🏽‍♀️
+
+Reasoning: This tweet accuses Democrats of attempting to steal the election, questioning the legitimacy of the results.
+
+{
+  "tweets": [
+    {
+      "ID": 5028471,
+      "Sentiment": "opposing-Election_Legitimacy"
+    }
+  ]
+}
+
+EXAMPLE 5:
+
+Tweet 5028432: RT @AnaCabrera: JUST IN: In a 4-3 decision, the Wisconsin Supreme Court decided it will not hear a lawsuit filed by Trump seeking to remove…
+
+Reasoning: This tweet mentioned Trump, but it focuses on the Wisconsin Supreme Court's decision not to hear Trump's lawsuit, which is about the election results' legitimacy, so the topic is Election_Legitimacy instead of Candidate_Advocacy. Since it reports the court's decision, it is supportive of the election results' legitimacy.
+
+{
+  "tweets": [
+    {
+      "ID": 5028432,
+      "Sentiment": "supportive-Election_Legitimacy"
+    }
+  ]
+}

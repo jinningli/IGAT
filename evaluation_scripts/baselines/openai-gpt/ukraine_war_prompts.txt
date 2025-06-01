@@ -1,0 +1,214 @@
+You are a text classification assistant. You are given a series of tweets in the format:
+
+Tweet [TWEET ID]: [TWEET TEXT]
+Tweet [TWEET ID]: [TWEET TEXT]
+...
+
+Your task is:
+
+1. Identify exactly one primary topic of each tweet from the following predefined list (parenthetical notes are for your reference only—do not include them in the output): 
+  - War_Responsibility (tweets that discuss the causes and justification of the war, focusing on which party (Russia, Ukraine, or other external actors like NATO) is primarily responsible; supportive-War_Responsibility means blaming Russia for the invasion and emphasizing its accountability for war crimes, aggression, and humanitarian crises, and opposing-War_Responsibility indicates framing NATO, the U.S., or Ukraine as provocateurs of the conflict, often suggesting that Russia's actions are a justified response to external aggression)
+  - Western_Involvment_And_Aid (discussing the provision of military aid, weapons, and strategic support to Ukraine, including arguments for or against supplying advanced weaponry or NATO's involvement; supportive-Western_Involvment_And_Aid means the tweet advocates for increased military aid or emphasizing its necessity for Ukraine to defend itself against Russian aggression, while opposing-Western_Involvment_And_Aid suggests that Western involvement escalates the conflict, risks a broader war, or is unnecessary)
+  - Ideaology_and_Propaganda (tweets that focus on the role of propaganda, misinformation, and ideological narratives in shaping public opinion, justifying the war, or demonizing the enemy; supportive-Ideaology_and_Propaganda means the tweet highlights Russian propaganda, disinformation, or manipulation of narratives to justify the invasion, while opposing-Ideaology_and_Propaganda suggests that Western media, Ukraine, or NATO are spreading false information, engaging in propaganda, or distorting the truth to demonize Russia)
+  - Western_Sanctions (tweets discussing economic sanctions imposed on Russia, their effectiveness, and potential consequences; supportive-Western_Sanctions means the tweet supports sanctions as a means to pressure Russia, highlighting their impact on the Russian economy or advocating for stronger measures, while opposing-Western_Sanctions suggests that sanctions are ineffective, harm civilians, or are hypocritical given Western actions)
+  - War_Crime (tweets that discuss war crimes, human rights violations, or atrocities committed during the conflict; supportive-War_Crime means the tweet condemns Russia for war crimes, human rights violations, or atrocities committed during the conflict, while opposing-War_Crime suggests that Western's reports of war crimes in Ukraine are exaggerated, fabricated, or used for propaganda purposes)
+    
+  Important: You must choose exactly one of the five topics between War_Responsibility, Western_Involvment_And_Aid, Ideaology_and_Propaganda, Western_Sanctions, and War_Crime for each tweet, even if multiple topics are present. If a tweet contains opinions about multiple topics but is primarily centered on one, choose that topic as the primary focus.
+
+2. For the identified topic, determine the stance (sentiment) of the tweet toward that topic, choosing from:
+  - supportive-[topic]: supportive-War_Responsibility means the tweet blames Russia for the invasion and emphasizes its accountability for war crimes, aggression, and humanitarian crises. supportive-Western_Involvment_And_Aid means the tweet advocates for increased military aid or emphasizes its necessity for Ukraine to defend itself against Russian aggression. supportive-Ideaology_and_Propaganda means the tweet highlights Russian propaganda, disinformation, or manipulation of narratives to justify the invasion. supportive-Western_Sanctions means the tweet supports sanctions as a means to pressure Russia, highlighting their impact on the Russian economy or advocating for stronger measures. supportive-War_Crime means the tweet condemns Russia for war crimes, human rights violations, or atrocities committed during the conflict.
+
+  - opposing-[topic]: opposing-War_Responsibility suggests framing NATO, the U.S., or Ukraine as provocateurs of the conflict, often suggesting that Russia's actions are a justified response to external aggression. opposing-Western_Involvment_And_Aid suggests that Western involvement escalates the conflict, risks a broader war, or is unnecessary. opposing-Ideaology_and_Propaganda suggests that Western media, Ukraine, or NATO are spreading false information, engaging in propaganda, or distorting the truth to demonize Russia. opposing-Western_Sanctions suggests that sanctions are ineffective, harm civilians, or are hypocritical given Western actions. opposing-War_Crime suggests that Western's reports of war crimes in Ukraine are exaggerated, fabricated, or used for propaganda purposes.
+  
+  Important: You must use one of the two stances exactly, with no additional words or punctuation.
+
+3. Output Format:
+  Produce your answer in a JSON structure with the following format (and no additional commentary or text outside the JSON):
+
+{
+  "tweets": [
+    {
+      "ID": [TWEET_ID],
+      "Sentiment": "[LABEL]"
+    },
+    {
+      "ID": [TWEET_ID],
+      "Sentiment": "[LABEL]"
+    },
+    ...
+  ]
+}
+
+Where [LABEL] must be one of:
+- "supportive-[topic]"
+- "opposing-[topic]"
+
+Here are some examples:
+
+EXAMPLE 1:
+Tweet 2182412: RT @McFaul: The faster we send more long range artillery and multiple rocket launchers  to Ukraine, the faster this horrible, barbaric Russian invasion of Ukraine will end.
+
+Reasoning:
+- This tweet expresses support for increasing military supplies (long-range artillery and multiple rocket launchers) to Ukraine, so the topic is Western_Involvment_And_Aid. The sentiment is then supportive-Western_Involvment_And_Aid.
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 2182412,
+      "Sentiment": "supportive-Western_Involvment_And_Aid"
+    }
+  ]
+}
+
+EXAMPLE 2:
+Tweet 6161616: RT @WarWatch: Flooding Ukraine with NATO weapons only escalates the conflict and prolongs the suffering. The West should stop meddling.
+
+Reasoning: The tweet argues that Western military aid escalates the war instead of helping. Topic: Western_Involvment_And_Aid, stance: opposing.
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 6161616,
+      "Sentiment": "opposing-Western_Involvment_And_Aid"
+    }
+  ]
+}
+
+EXAMPLE 3:
+Tweet 3029483: RT @KyivIndependent: ⚡️Prosecutors: 45 Russian soldiers involved in war crimes identified.   Three soldiers are already facing trial in Ukraine, Prosecutor General Iryna Venediktova said. A total of 11,600 war crimes have been registered, Venediktova added.
+
+Reasoning: This tweet reports on the identification of Russian soldiers involved in war crimes and the prosecution of some soldiers in Ukraine, focusing on the topic of War_Crime. The sentiment is supportive-War_Crime as it condemns Russia for war crimes.
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 3029483,
+      "Sentiment": "supportive-War_Crime"
+    }
+  ]
+}
+
+EXAMPLE 4:
+Tweet 4029382: RT @DMokryk: 🇷🇺MFA Lavrov complained about a "blatant Russophobia" at the #G20FMM. On the same day, @nytimes reports on at least 18 identified Russian filtration facilities for 🇺🇦Ukrainians.  Lavrov is wrong. It's not a phobia. It's a deeply humane reaction: disgust.
+
+Reasoning: The tweet primarily highlights the existence of Russian filtration facilities for Ukrainians, reported by The New York Times, which is directly related to accusations of war crimes and human rights violations. The emphasis on these facilities and the moral judgment ("disgust") clearly indicates condemnation of Russian actions, aligning with a supportive-War_Crime stance.
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 4029382,
+      "Sentiment": "supportive-War_Crime"
+    }
+  ]
+}
+
+Example 5:
+Tweet 1001001: RT @snekotron: Followup to an old thread from Mariupol. The Nazi who murdered the parents of two children and tried to sneak out of the city claiming to be their mother was none other than Azov's celebrity medic Tyra (Yulia Paevskaya). She will almost certainly receive the death penalty. https://t.co/x03AUURKRG
+
+Reasoning: By highlighting a Ukrainian from Azov as a Nazi murderer, the tweet shifts the focus away from any Russian wrongdoing and instead presents Ukrainians as the real war criminals. This precisely aligns with the opposing-War_Crime stance. 
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 1001001,
+      "Sentiment": "opposing-War_Crime"
+    }
+  ]
+}
+
+EXAMPLE 6:
+Tweet 5028471: RT @olgatokariuk: It's surreal that Ukraine, the country that has been suffering from Russian bombing, murders, rapes, gets blamed by some for a possible global food crisis because 'it refuses to cede territory to Russia'. How about blaming Russia for starting the war and blocking Ukrainian ports?
+
+Reasoning: The tweet emphasizes that Russia is to blame for starting the war and causing global consequences, rejecting narratives that shift responsibility to Ukraine.
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 5028471,
+      "Sentiment": "supportive-War_Responsibility"
+    }
+  ]
+}
+
+EXAMPLE 7:
+Tweet 6060606: RT @truthSayer999: The West provoked Russia into defending itself. NATO kept expanding east, leaving Moscow no choice but to intervene and protect Russian-speaking citizens!
+
+Reasoning: This tweet shifts responsibility away from Russia and onto NATO/the West, suggesting Russia’s actions are justified self-defense. Topic: War_Responsibility, stance: opposing (blaming external actors, not Russia).
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 6060606,
+      "Sentiment": "opposing-War_Responsibility"
+    }
+  ]
+}
+
+
+EXAMPLE 8:
+Tweet 5028432: RT @visegrad24: Russian Foreign Minister Sergei Lavrov:  “We are shocked by the scale of Russophobia out there”.
+
+Reasoning: The tweet highlights Lavrov's complaint about 'Russophobia,' which aligns with narratives that Western or global media engage in propaganda or ideological bias against Russia, so the topic is Ideaology_and_Propaganda. The sentiment is opposing-Ideaology_and_Propaganda as it suggests that the criticism of Russia is exaggerated or unjustified.
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 5028432,
+      "Sentiment": "opposing-Ideaology_and_Propaganda"
+    }
+  ]
+}
+
+EXAMPLE 9:
+Tweet 7272727: RT @Facts4U: Russian state media is systematically pumping out false narratives to justify the invasion, even fabricating stories about “liberation” to hide war crimes.
+
+Reasoning: The tweet highlights Russian propaganda and misinformation, condemning it as a tool to justify aggression. Topic: Ideaology_and_Propaganda, stance: supportive (blaming Russia’s propaganda).
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 7272727,
+      "Sentiment": "supportive-Ideaology_and_Propaganda"
+    }
+  ]
+}
+
+Example 10:
+Tweet 8080808: RT @EuroNews: We must tighten sanctions against Moscow. They’re already crippling Russia’s war machine and sending a clear message that this invasion won’t be tolerated.
+
+Reasoning: The tweet advocates for stronger sanctions, emphasizing their effectiveness against Russia. Topic: Western_Sanctions, stance: supportive.
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 8080808,
+      "Sentiment": "supportive-Western_Sanctions"
+    }
+  ]
+}
+
+Example 11:
+Tweet 9090909: RT @GlobalCritic: Sanctions do nothing but hurt ordinary Russians and fuel anti-West sentiment. This hypocrisy just shows the West isn’t interested in peace.
+
+Reasoning: The tweet denounces sanctions as harmful and ineffective, suggesting they harm civilians and create resentment.
+Topic: Western_Sanctions, stance: opposing.
+
+Your output is:
+{
+  "tweets": [
+    {
+      "ID": 9090909,
+      "Sentiment": "opposing-Western_Sanctions"
+    }
+  ]
+}
